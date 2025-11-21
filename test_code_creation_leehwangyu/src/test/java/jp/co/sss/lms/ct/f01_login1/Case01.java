@@ -49,7 +49,8 @@ public class Case01 {
 		//ログインボタンの存在確認
 		WebElement loginButton = wait.until(
 				ExpectedConditions.presenceOfElementLocated(
-						By.cssSelector("input[type='submit'][value='ログイン']")));
+
+		By.cssSelector("input[type='submit'][value='ログイン']")));
 
 		assertEquals("ログイン", loginButton.getAttribute("value"));
 
