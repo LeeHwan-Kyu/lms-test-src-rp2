@@ -49,11 +49,11 @@ public class Case01 {
 		//ログインボタンの存在確認
 		WebElement loginButton = wait.until(
 				ExpectedConditions.presenceOfElementLocated(
-						By.xpath("//input[@type='submit' and @value='ログイン']")));
+						By.cssSelector("input[type='submit'][value='ログイン']")));
 
 		assertEquals("ログイン", loginButton.getAttribute("value"));
 
-		//エビデンス（匿名内部クラス利用）
+		//Case01_test01エビデンス取得
 		getEvidence(new Object() {
 		});
 	}
