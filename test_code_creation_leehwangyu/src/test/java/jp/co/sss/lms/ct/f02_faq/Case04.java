@@ -50,7 +50,7 @@ public class Case04 {
 		//タイトルチェック
 		assertEquals("ログイン | LMS", webDriver.getTitle());
 
-		//エビデンス
+		//Case04_test01エビデンスを取得
 		getEvidence(new Object() {
 		});
 	}
@@ -77,11 +77,10 @@ public class Case04 {
 		//遷移先が /course/detail になるまで待機
 		wait.until(ExpectedConditions.urlContains("/course/detail"));
 
-		//「コース詳細」の文字が表示されるまで待機
-		wait.until(ExpectedConditions.presenceOfElementLocated(
-				By.xpath("//*[contains(text(),'コース詳細')]")));
+		// タイトルチェック
+		assertEquals("コース詳細 | LMS", webDriver.getTitle());
 
-		//エビデンス
+		//Case04_test02エビデンスを取得
 		getEvidence(new Object() {
 		});
 	}
@@ -108,7 +107,7 @@ public class Case04 {
 		// タイトルチェック
 		assertEquals("ヘルプ | LMS", webDriver.getTitle());
 
-		// エビデンス
+		//Case04_test03エビデンスを取得
 		getEvidence(new Object() {
 		});
 	}
@@ -141,7 +140,7 @@ public class Case04 {
 		//タイトルチェック
 		assertEquals("よくある質問 | LMS", webDriver.getTitle());
 
-		//エビデンス
+		//Case04_test04エビデンスを取得
 		getEvidence(new Object() {
 		});
 	}
