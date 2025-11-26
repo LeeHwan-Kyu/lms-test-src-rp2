@@ -48,7 +48,7 @@ public class Case03 {
 		//タイトルチェック
 		assertEquals("ログイン | LMS", webDriver.getTitle());
 
-		//エビデンス
+		//Case03_test01エビデンスを取得
 		getEvidence(new Object() {
 		});
 	}
@@ -76,11 +76,10 @@ public class Case03 {
 		//遷移先が /course/detail になるまで待機
 		wait.until(ExpectedConditions.urlContains("/course/detail"));
 
-		//「コース詳細」という文字が表示されていることを確認
-		wait.until(ExpectedConditions.presenceOfElementLocated(
-				By.xpath("//*[contains(text(),'コース詳細')]")));
+		// タイトルチェック
+		assertEquals("コース詳細 | LMS", webDriver.getTitle());
 
-		//エビデンス
+		//Case03test02エビデンスを取得
 		getEvidence(new Object() {
 		});
 	}
