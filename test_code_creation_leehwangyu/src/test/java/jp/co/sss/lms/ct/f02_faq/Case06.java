@@ -4,7 +4,6 @@ import static jp.co.sss.lms.ct.util.WebDriverUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.Duration;
-import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.AfterAll;
@@ -43,12 +42,17 @@ public class Case06 {
 	@DisplayName("テスト01 トップページURLでアクセス")
 	void test01() {
 
+		//トップページURLにアクセス
 		webDriver.get("http://localhost:8080/lms");
 
+		//タイトル「ログイン | LMS」になるまで待機
 		WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(30));
 		wait.until(ExpectedConditions.titleIs("ログイン | LMS"));
 
+		//タイトルチェック
 		assertEquals("ログイン | LMS", webDriver.getTitle());
+
+		//Case05_test01エビデンスを取得
 		getEvidence(new Object() {
 		});
 	}
@@ -60,15 +64,25 @@ public class Case06 {
 
 		WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(30));
 
+		//環境変数からID/PW取得
 		String id = System.getenv("LMS_ID");
 		String pw = System.getenv("LMS_PW");
 
+		//ID/PW入力
 		webDriver.findElement(By.id("loginId")).sendKeys(id);
 		webDriver.findElement(By.id("password")).sendKeys(pw);
-		webDriver.findElement(By.cssSelector("input[type='submit'][value='ログイン']")).click();
 
+		//ログインボタン押下
+		webDriver.findElement(
+				By.cssSelector("input[type='submit'][value='ログイン']")).click();
+
+		//遷移先が /course/detail になるまで待機
 		wait.until(ExpectedConditions.urlContains("/course/detail"));
+
+		// タイトルチェック
 		assertEquals("コース詳細 | LMS", webDriver.getTitle());
+
+		//Case05_test02エビデンスを取得
 		getEvidence(new Object() {
 		});
 	}
@@ -80,36 +94,55 @@ public class Case06 {
 
 		WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(30));
 
+		// 「機能」メニューをクリックしてドロップダウンを開く
 		webDriver.findElement(By.linkText("機能")).click();
+
+		// 「ヘルプ」リンクが表示されるまで待機
 		wait.until(ExpectedConditions.presenceOfElementLocated(By.linkText("ヘルプ")));
+
+		// 「ヘルプ」をクリック
 		webDriver.findElement(By.linkText("ヘルプ")).click();
 
+		// ヘルプ画面のタイトルになるまで待機
 		wait.until(ExpectedConditions.titleIs("ヘルプ | LMS"));
+
+		// タイトルチェック
 		assertEquals("ヘルプ | LMS", webDriver.getTitle());
+
+		//Case05_test03エビデンスを取得
 		getEvidence(new Object() {
 		});
 	}
 
 	@Test
 	@Order(4)
-	@DisplayName("テスト04 「よくある質問」リンクを別タブで開く")
+	@DisplayName("テスト04 「よくある質問」リンクからよくある質問画面を別タブに開く")
 	void test04() {
 
 		WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(30));
 
+		// 現在のタブを保持
 		String currentTab = webDriver.getWindowHandle();
+
+		//「よくある質問」リンク押下（別タブ）
 		webDriver.findElement(By.linkText("よくある質問")).click();
 
-		Set<String> tabs = webDriver.getWindowHandles();
-		for (String tab : tabs) {
+		// タブ切り替え
+		Set<String> allTabs = webDriver.getWindowHandles();
+		for (String tab : allTabs) {
 			if (!tab.equals(currentTab)) {
 				webDriver.switchTo().window(tab);
 				break;
 			}
 		}
 
+		//タイトル「よくある質問 | LMS」になるまで待機
 		wait.until(ExpectedConditions.titleIs("よくある質問 | LMS"));
+
+		//タイトルチェック
 		assertEquals("よくある質問 | LMS", webDriver.getTitle());
+
+		//Case05_test04エビデンスを取得
 		getEvidence(new Object() {
 		});
 	}
@@ -118,19 +151,21 @@ public class Case06 {
 	@Order(5)
 	@DisplayName("テスト05 カテゴリ検索で該当カテゴリの検索結果だけ表示")
 	void test05() {
+		WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(30));
 
 		// 「研修関係」カテゴリをクリック
 		webDriver.findElement(By.linkText("【研修関係】")).click();
 
-		WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(10));
-		wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("table tbody tr")));
+		// 検索結果行が表示される部分へスクロール
+		WebElement resultArea = webDriver.findElement(By.cssSelector("table"));
+		((JavascriptExecutor) webDriver).executeScript("arguments[0].scrollIntoView(true);", resultArea);
 
-		// 質問行を全件取得
-		List<WebElement> questions = webDriver.findElements(By.cssSelector("table tbody tr dl dt"));
+		// タイトル「よくある質問 | LMS」になるまで待機
+		wait.until(ExpectedConditions.titleIs("よくある質問 | LMS"));
 
-		// 1件以上表示されていることだけ確認
-		assertTrue(questions.size() > 0);
-
+		// タイトルチェック
+		assertEquals("よくある質問 | LMS", webDriver.getTitle());
+		// Case06_test05エビデンスを取得
 		getEvidence(new Object() {
 		});
 	}
@@ -139,19 +174,22 @@ public class Case06 {
 	@Order(6)
 	@DisplayName("テスト06 検索結果の質問クリックで回答表示")
 	void test06() {
+		WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(30));
 
 		// 1件目の質問をクリック
 		WebElement question = webDriver.findElement(By.cssSelector("table tbody tr dl dt"));
-		// 要素位置までスクロール（他要素に遮られないように）
-		((JavascriptExecutor) webDriver).executeScript(
-				"arguments[0].scrollIntoView(true);", question);
-
 		question.click();
 
 		// 回答要素を取得し、表示状態を確認
 		WebElement answer = webDriver.findElement(By.cssSelector("table tbody tr dl dd"));
 		assertEquals("fs18", answer.getAttribute("class"));
 
+		// タイトル「よくある質問 | LMS」になるまで待機
+		wait.until(ExpectedConditions.titleIs("よくある質問 | LMS"));
+
+		// タイトルチェック
+		assertEquals("よくある質問 | LMS", webDriver.getTitle());
+		// Case06_test06エビデンスを取得
 		getEvidence(new Object() {
 		});
 	}

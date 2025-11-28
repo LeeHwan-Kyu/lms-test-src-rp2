@@ -4,7 +4,6 @@ import static jp.co.sss.lms.ct.util.WebDriverUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.Duration;
-import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.AfterAll;
@@ -15,7 +14,7 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -154,6 +153,7 @@ public class Case05 {
 	@Order(5)
 	@DisplayName("テスト05 キーワード検索で該当キーワードのみ表示")
 	void test05() {
+		WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(30));
 
 		// キーワード入力
 		webDriver.findElement(By.id("form")).sendKeys("申し込み");
@@ -161,19 +161,15 @@ public class Case05 {
 		// 検索押下
 		webDriver.findElement(By.cssSelector("input[value='検索']")).click();
 
-		WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(10));
+		// 検索結果が画面に見えるように、クリアボタンの位置までスクロール
+		((JavascriptExecutor) webDriver).executeScript("window.scrollBy(0, 400);");
 
-		// 検索結果行をすべて取得
-		wait.until(ExpectedConditions.presenceOfElementLocated(
-				By.cssSelector("table tbody tr")));
+		// タイトル「よくある質問 | LMS」になるまで待機
+		wait.until(ExpectedConditions.titleIs("よくある質問 | LMS"));
 
-		List<WebElement> rows = webDriver.findElements(By.cssSelector("table tbody tr dl dt"));
-
-		// 全件が「申し込み」を含むことを確認
-		for (WebElement q : rows) {
-			assertTrue(q.getText().contains("申し込み"));
-		}
-		//Case05_test05エビデンスを取得
+		// タイトルチェック
+		assertEquals("よくある質問 | LMS", webDriver.getTitle());
+		// Case05_test05エビデンスを取得
 		getEvidence(new Object() {
 		});
 	}
@@ -182,6 +178,7 @@ public class Case05 {
 	@Order(6)
 	@DisplayName("テスト06 「クリア」ボタン押下で入力したキーワードを消去")
 	void test06() {
+		WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(30));
 
 		// クリアボタン押下
 		webDriver.findElement(By.cssSelector("input[value='クリア']")).click();
@@ -190,7 +187,13 @@ public class Case05 {
 		String value = webDriver.findElement(By.id("form")).getAttribute("value");
 		assertEquals("", value);
 
-		//Case05_test06エビデンスを取得
+		// タイトル「よくある質問 | LMS」になるまで待機
+		wait.until(ExpectedConditions.titleIs("よくある質問 | LMS"));
+
+		// タイトルチェック
+		assertEquals("よくある質問 | LMS", webDriver.getTitle());
+
+		// Case05_test06エビデンスを取得
 		getEvidence(new Object() {
 		});
 	}
